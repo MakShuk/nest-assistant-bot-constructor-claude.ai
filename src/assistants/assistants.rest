@@ -1,0 +1,24 @@
+@baseUrl = http://localhost:2001
+
+### 
+GET {{baseUrl}}/assistants/
+
+### 
+GET {{baseUrl}}/assistants/assistant/asst_lhGVeKt3ZCm3kUZmC3Ap05JG
+
+### 
+POST {{baseUrl}}/assistants/
+content-type: application/json
+
+{
+  "assistantName": "Test1", "instructions": "Best code"
+}
+
+###
+DELETE  {{baseUrl}}/assistants/asst_FKJKKNwnCkbruGbe2Sr2RGaZ
+
+###
+PATCH {{baseUrl}}/assistants/
+content-type: application/json
+
+{ "vectorStoreId": "vs_iHck8elos1GdLNh07qdgmVWP", "assistantId": "asst_xvfzRs9TTtIyBG1ayUhCCSgs" }

@@ -1,0 +1,20 @@
+@baseUrl = http://localhost:2001
+### New User
+POST {{baseUrl}}/users
+content-type: application/json
+
+{
+ "telegramUserId": "305343617", "username": "maks"
+}
+
+### Get All Users
+GET {{baseUrl}}/users/
+
+### Get User
+GET {{baseUrl}}/users/3243223dfAfd_Svd!
+
+###Delete User 
+DELETE {{baseUrl}}/users/3243223dfAfd_Svd!
+
+###
+GET {{baseUrl}}/users/all/user123
