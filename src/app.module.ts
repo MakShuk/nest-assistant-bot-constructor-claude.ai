@@ -19,12 +19,11 @@ import { AuthGuard } from './guard/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { InitializationService } from './services/Initialization.service';
 import { FilesModule } from './files/file.module';
+import { getConfigModuleOptions } from './configs/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV}`,
-    }),
+    ConfigModule.forRoot(getConfigModuleOptions()),
     OpenAIModule.forRootAsync(),
     TelegramModule.forRootAsync(),
     ThreadsModule,

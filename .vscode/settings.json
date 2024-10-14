@@ -44,7 +44,7 @@
         "**/nest-cli.json": true,
         "**/.dockerignore": true,
         "**/dev.db": true,
-        "**/dev.db-journal": true
-    }
+        "**/dev.db-journal": true,
+        "**/prisma/migrations": true
     }
 }
