@@ -20,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { InitializationService } from './services/Initialization.service';
 import { FilesModule } from './files/file.module';
 import { getConfigModuleOptions } from './configs/config';
+import { ClaudeModule } from './claude/claude.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { getConfigModuleOptions } from './configs/config';
       secret: process.env.JWT_SECRET,
     }),
     FilesModule,
+    ClaudeModule,
   ],
   controllers: [],
   providers: [
