@@ -10,6 +10,7 @@ import fetch from 'node-fetch';
 import { OggConverter } from './ogg-converter.service';
 import { VectorStoresService } from 'src/vector-stores/vector-stores.service';
 import { FilesService } from 'src/files/files.service';
+import { ClaudeService } from 'src/claude/claude.service';
 
 @Injectable()
 export class CommandsService {
@@ -18,9 +19,67 @@ export class CommandsService {
     private readonly thread: ThreadsService,
     private readonly vector: VectorStoresService,
     private readonly files: FilesService,
-    private oggConverter: OggConverter,
+    private readonly claude: ClaudeService,
+    private readonly oggConverter: OggConverter,
     @Inject('OPENAI_INSTANCE') private readonly openai: OpenAI,
   ) {}
+
+  streamClaudeText = async (
+    ctx: Context,
+    text?: string,
+    botMessage?: Message.TextMessage,
+  ) => {
+    try {
+      const message =
+        'text' in ctx.message ? ctx.message.text : text.length > 0 ? text : '';
+
+      //const userId = `${ctx.from.id}`;
+      let sendMessage;
+
+      if (typeof botMessage !== 'undefined') {
+        sendMessage = botMessage;
+      } else {
+        sendMessage = await ctx.reply('🔄 Подождите, ответ формируется...');
+      }
+
+      const stream = await this.claude.streamText(message);
+
+      let textInStream = ``;
+      let lastCallTime = Date.now();
+      let messagesSplit: string[] = [];
+
+      for await (const event of stream) {
+        const currentTime = Date.now();
+        if ('delta' in event && 'text' in event.delta) {
+          textInStream += event.delta.text || '';
+          messagesSplit = this.splitMessage(textInStream, 3900);
+          const isSendTime =
+            currentTime - lastCallTime >
+            Number(process.env.CHAT_UPDATE_INTERVAL);
+          if (isSendTime) {
+            lastCallTime = currentTime;
+            if (messagesSplit.length > 1) {
+              messagesSplit = this.splitMessage(textInStream, 3900);
+              await this.editMessageText(ctx, sendMessage, messagesSplit[0]);
+              sendMessage = await ctx.reply(`Обработка сообщения...`);
+              textInStream = messagesSplit[1];
+            } else {
+              await this.editMessageTextWithFallback(
+                ctx,
+                sendMessage,
+                messagesSplit[0],
+              );
+            }
+          }
+        }
+      }
+      await this.editMessageTextWithFallback(ctx, sendMessage, textInStream);
+    } catch (error) {
+      const errorMessage = `⚠️ Произошла ошибка при обработке запроса: ${error.message}`;
+      console.error(errorMessage);
+      return ctx.reply(errorMessage);
+    }
+  };
 
   start = async (ctx: Context) => {
     return ctx.reply(`🤖 Команды:
@@ -188,7 +247,7 @@ export class CommandsService {
         'Обработка аудио завершена',
       );
 
-      await this.streamText(ctx, text, message);
+      await this.streamClaudeText(ctx, text, message);
     } catch (error) {
       console.error('Error in audioMessage method:', error);
       return ctx.reply('⚠️ Произошла ошибка при обработке аудиосообщения');

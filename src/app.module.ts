@@ -21,6 +21,7 @@ import { InitializationService } from './services/Initialization.service';
 import { FilesModule } from './files/file.module';
 import { getConfigModuleOptions } from './configs/config';
 import { ClaudeModule } from './claude/claude.module';
+import { ClaudeService } from './claude/claude.service';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ClaudeModule } from './claude/claude.module';
     OggConverter,
     VectorStoresService,
     InitializationService,
+    ClaudeService,
   ],
 })
 export class AppModule {}

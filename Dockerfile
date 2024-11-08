@@ -20,7 +20,7 @@ RUN npm install -g @nestjs/cli
 COPY . .
 
 # Копируем файл .env.production
-COPY .env.production .env
+COPY /envs/.env.production .env
 
 # Запускаем сборку проекта
 RUN npm run build
