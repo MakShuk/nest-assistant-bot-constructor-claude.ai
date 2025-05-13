@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  bot-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ImprovWizard_bot
+    restart: always
+    networks:
+      - home
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - PROJECT_NAME=${PROJECT_NAME}
+      - ASSISTANT_ID=${ASSISTANT_ID}
+      - INSTRUCTION=${INSTRUCTION}
+networks:
+  home:
+    driver: bridge
